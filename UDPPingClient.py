@@ -4,11 +4,11 @@ import sys
 from time import time
 
 client_socket = socket(AF_INET, SOCK_DGRAM)
-client_socket.settimeout(1.0)
+client_socket.settimeout(1)
 
 server_ip = sys.argv[1]
 server_port = sys.argv[2]
-n = sys.argv[3]
+n = int(sys.argv[3])
 print("Pinging {}".format(server_ip))
 
 count = 1
@@ -31,18 +31,19 @@ while count <= n:
         if elapsed_time > max_time:
             max_time = elapsed_time
         sum_time += elapsed_time
-        
+
         print("Reply from {}: {} time={}ms TTL=1".format(server_ip,recv_message.decode(),elapsed_time))
         success += 1
     except:
         print("Request timed out")
         fail +=1
+    count +=1
 
-print("Ping Statistics for {}".format(server_ip))
-lost = ((fail)/n)*100
-lost = "{}%"
+print("\nPing Statistics for {}".format(server_ip))
+lost = (float((fail))/float(n))*100.0
+lost = str(lost) + "%"
 print("\tSegments: Sent: {}, Received: {}, Lost: {} ({} Loss)".format(n,success,fail,lost))
-print("Approximate round trip times in ms:\n\tMinimum = {}ms, Maximum = {}ms, Average = {}ms",format(min_time,max_time,sum_time/success))
+print("Approximate round trip times in ms:\n\tMinimum = {}ms, Maximum = {}ms, Average = {}ms".format(min_time,max_time,sum_time/success))
 
 
 client_socket.close()
